@@ -25,13 +25,13 @@ def construct_society(question: str) -> OwlRolePlaying:
     
     user_model = ModelFactory.create(
         model_platform=ModelPlatformType.OPENAI,
-        model_type=ModelType.GPT_4O,
+        model_type=ModelType.GPT_4O_MINI,
         model_config_dict=ChatGPTConfig(temperature=0, top_p=1).as_dict(), # [Optional] the config for model
     )
 
     assistant_model = ModelFactory.create(
         model_platform=ModelPlatformType.OPENAI,
-        model_type=ModelType.GPT_4O,
+        model_type=ModelType.GPT_4O_MINI,
         model_config_dict=ChatGPTConfig(temperature=0, top_p=1).as_dict(), # [Optional] the config for model
     )
 
@@ -45,9 +45,9 @@ def construct_society(question: str) -> OwlRolePlaying:
         *VideoAnalysisToolkit(model=assistant_model).get_tools(),  # This requires OpenAI Key
         *AudioAnalysisToolkit().get_tools(),  # This requires OpenAI Key
         *CodeExecutionToolkit().get_tools(),
-        *ImageAnalysisToolkit(model=assistant_model).get_tools(),
-        *SearchToolkit(model=assistant_model).get_tools(),
-        *ExcelToolkit().get_tools()
+        #*ImageAnalysisToolkit(model=assistant_model).get_tools(),
+        #*SearchToolkit(model=assistant_model).get_tools(),
+        #*ExcelToolkit().get_tools()
     ]
 
     user_role_name = 'user'
@@ -73,7 +73,7 @@ def construct_society(question: str) -> OwlRolePlaying:
 
 
 # Example case
-question = "What was the volume in m^3 of the fish bag that was calculated in the University of Leicester paper `Can Hiccup Supply Enough Fish to Maintain a Dragon’s Diet?` "
+question = "Why the world keep running out of water?"
 
 society = construct_society(question)
 answer, chat_history, token_count = run_society(society)

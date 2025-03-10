@@ -49,6 +49,7 @@ from .excel_toolkit import ExcelToolkit
 from .document_processing_toolkit import DocumentProcessingToolkit
 from .sympy_toolkit import SymPyToolkit
 from .web_toolkit import WebToolkit
+from .audio_manipulation_toolkit import AudioManipulationToolkit
 
 
 __all__ = [
@@ -86,4 +87,5 @@ __all__ = [
     'DocumentProcessingToolkit',
     'SymPyToolkit',
     'WebToolkit',
-]
+    'AudioManipulationToolkit',
+] 
