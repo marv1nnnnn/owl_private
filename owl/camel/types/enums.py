@@ -34,6 +34,8 @@ class ModelType(UnifiedModelType, Enum):
     GPT_4_TURBO = "gpt-4-turbo"
     GPT_4O = "gpt-4o"
     GPT_4O_MINI = "gpt-4o-mini"
+    GPT_4O_AUDIO_PREVIEW = "gpt-4o-audio-preview"
+    GPT_4O_MINI_AUDIO_PREVIEW = "gpt-4o-mini-audio-preview"
     O1 = "o1"
     O1_PREVIEW = "o1-preview"
     O1_MINI = "o1-mini"
