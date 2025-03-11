@@ -526,6 +526,8 @@ class ModelType(UnifiedModelType, Enum):
             ModelType.GPT_4O,
             ModelType.GPT_4O_MINI,
             ModelType.GPT_4_TURBO,
+            ModelType.GPT_4O_AUDIO_PREVIEW,
+            ModelType.GPT_4O_MINI_AUDIO_PREVIEW,
             ModelType.O1_PREVIEW,
             ModelType.O1_MINI,
             ModelType.MISTRAL_LARGE,
