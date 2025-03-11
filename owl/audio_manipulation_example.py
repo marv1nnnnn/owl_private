@@ -46,7 +46,7 @@ def construct_society_with_audio_tools(question: str) -> OwlRolePlaying:
 
     assistant_model = ModelFactory.create(
         model_platform=ModelPlatformType.OPENAI,
-        model_type=ModelType.GPT_4O,
+        model_type=ModelType.GPT_4O_AUDIO_PREVIEW,
         model_config_dict=ChatGPTConfig(temperature=0.2, top_p=1).as_dict(),
     )
 

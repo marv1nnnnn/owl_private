@@ -24,6 +24,10 @@ import importlib.util
 import torch
 import random
 import string
+import soundfile as sf
+import requests
+import base64
+from urllib.parse import urlparse
 
 from loguru import logger
 
@@ -725,6 +729,88 @@ class AudioManipulationToolkit(BaseToolkit):
             logger.error(f"Error combining audio files: {str(e)}")
             raise RuntimeError(f"Failed to combine audio files: {str(e)}")
 
+
+    def evaluate_audio(self, audio_path: str, criteria: str = None) -> str:
+        r"""Evaluate the  audio file using GPT-4o-audio-preview.
+
+        Args:
+            audio_path (str): The path to the audio file.
+            criteria (str, optional): Specific criteria to assess, e.g., 
+                "clarity", "background noise", "pronunciation". Defaults to None
+                which does a comprehensive quality assessment.
+
+        Returns:
+            str: A detailed assessment of the audio quality.
+        """
+        logger.debug(
+            f"Evaluating audio quality for file `{audio_path}` with criteria: `{criteria}`"
+        )
+
+        parsed_url = urlparse(audio_path)
+        is_url = all([parsed_url.scheme, parsed_url.netloc])
+        encoded_string = None
+
+        if is_url:
+            res = requests.get(audio_path)
+            res.raise_for_status()
+            audio_data = res.content
+            encoded_string = base64.b64encode(audio_data).decode('utf-8')
+        else:
+            with open(audio_path, "rb") as audio_file:
+                audio_data = audio_file.read()
+            audio_file.close()
+            encoded_string = base64.b64encode(audio_data).decode('utf-8')
+
+        file_suffix = os.path.splitext(audio_path)[1]
+        file_format = file_suffix[1:]
+
+        # Prepare prompt based on criteria
+        if criteria:
+            text_prompt = f"""Evaluate the quality of this audio focusing specifically on {criteria}. 
+            Provide a detailed assessment of strengths and weaknesses, with a numerical rating from 1-10 for each aspect.
+            Include specific timestamps for any issues identified."""
+        else:
+            text_prompt = """Evaluate the quality of this audio across the following dimensions:
+            1. Overall Clarity and Intelligibility (1-10)
+            2. Background Noise Level (1-10, where 10 means no background noise)
+            3. Voice/Sound Quality (1-10) 
+            4. Pronunciation and Articulation if speech is present (1-10)
+            5. Audio Balance and Levels (1-10)
+            
+            For each aspect, provide:
+            - A numerical rating
+            - Specific observations with timestamps where relevant
+            - Suggestions for improvement
+            
+            End with an overall quality score and summary assessment."""
+
+        completion = self.client.chat.completions.create(
+            model="gpt-4o-audio-preview",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an audio quality assessment expert. Provide detailed, technical, and actionable feedback on audio quality.",
+                },
+                {  # type: ignore[list-item, misc]
+                    "role": "user",
+                    "content": [
+                        {"type": "text", "text": text_prompt},
+                        {
+                            "type": "input_audio",
+                            "input_audio": {
+                                "data": encoded_string,
+                                "format": file_format,
+                            },
+                        },
+                    ],
+                },
+            ],
+        )  # type: ignore[misc]
+
+        response: str = str(completion.choices[0].message.content)
+        logger.debug(f"Audio quality assessment: {response}")
+        return str(response)
+
     def create_audio_script(
         self, 
         script_prompt: str, 
@@ -846,4 +932,5 @@ class AudioManipulationToolkit(BaseToolkit):
             FunctionTool(self.combine_audio_files),
             FunctionTool(self.create_audio_script),
             FunctionTool(self.check_watermark),
+            FunctionTool(self.evaluate_audio)
         ] 

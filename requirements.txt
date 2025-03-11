@@ -141,3 +141,17 @@ types-tqdm
 types-colorama>=0.0.0
 types-requests>=2.0.0
 types-PyYAML>=6.0.0
+# Audio processing libraries
+librosa>=0.9.0
+soundfile>=0.12.0
+pydub>=0.25.0
+
+# TTS libraries
+espnet-tts-frontend>=0.0.2
+
+# For AudioLDM
+audiocraft>=1.0.0
+
+# For audio visualization (optional)
+matplotlib>=3.5.0
+seaborn>=0.11.0 
